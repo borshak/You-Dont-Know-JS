@@ -17,19 +17,37 @@ I hope by now you're not content to just gloss over and leave such details to a 
 
 As a brief review of our conclusions from Chapter 5, the `[[Prototype]]` mechanism is an internal link that exists on one object which references another object.
 
+-- Google --
+
+Эта связь осуществляется, когда ссылка на свойство / метод делается на первый объект, и не существует такого свойства / метода. В этом случае ссылка `[[Prototype]]` указывает двигателю искать свойство / метод для связанного объекта. В свою очередь, если этот объект не может выполнить поиск, его `[[Prototype]]` следует, и так далее. Эта серия связей между объектами образует так называемую "цепочку прототипов".
+
 This linkage is exercised when a property/method reference is made against the first object, and no such property/method exists. In that case, the `[[Prototype]]` linkage tells the engine to look for the property/method on the linked-to object. In turn, if that object cannot fulfill the look-up, its `[[Prototype]]` is followed, and so on. This series of links between objects forms what is called the "prototype chain".
+
+Другими словами, реальный механизм, суть того, что важно для функциональности, которую мы можем использовать в JavaScript, - это ** все об объектах, связанных с другими объектами. **
 
 In other words, the actual mechanism, the essence of what's important to the functionality we can leverage in JavaScript, is **all about objects being linked to other objects.**
 
+Это единственное наблюдение является фундаментальным и критически важным для понимания мотивов и подходов к остальной части этой главы!
+
 That single observation is fundamental and critical to understanding the motivations and approaches for the rest of this chapter!
+
+## На пути к дизайну, основанному на делегировании
 
 ## Towards Delegation-Oriented Design
 
+Чтобы правильно сконцентрировать наши мысли на том, как использовать `[[Prototype]]` самым простым способом, мы должны признать, что он представляет принципиально отличную схему проектирования от классов (см. Главу 4).
+
 To properly focus our thoughts on how to use `[[Prototype]]` in the most straightforward way, we must recognize that it represents a fundamentally different design pattern from classes (see Chapter 4).
+
+** Примечание: ** * Некоторые принципы класса-ориентированного проектирования все еще очень актуальны, поэтому не выбрасывайте все, что вам известно (просто большинство!). Например, * encapsulation * является достаточно мощным и совместимым (хотя и не общим) с делегированием.
 
 **Note:** *Some* principles of class-oriented design are still very valid, so don't toss out everything you know (just most of it!). For example, *encapsulation* is quite powerful, and is compatible (though not as common) with delegation.
 
+Нам нужно попытаться изменить наше мышление из шаблона проектирования класса / наследования на шаблон проектирования поведения. Если вы сделали большинство или все свои программы в своем образовательном / карьерном мышлении на классах, это может быть неудобно или чувствовать себя неестественно. Вам может понадобиться несколько раз попробовать это умственное упражнение, чтобы получить представление об этом совсем другом образе мышления.
+
 We need to try to change our thinking from the class/inheritance design pattern to the behavior delegation design pattern. If you have done most or all of your programming in your education/career thinking in classes, this may be uncomfortable or feel unnatural. You may need to try this mental exercise quite a few times to get the hang of this very different way of thinking.
+
+Сначала мы проведем некоторые теоретические упражнения, а затем посмотрим бок о бок на более конкретный пример, чтобы дать вам практический контекст для вашего собственного кода.
 
 I'm going to walk you through some theoretical exercises first, then we'll look side-by-side at a more concrete example to give you practical context for your own code.
 
