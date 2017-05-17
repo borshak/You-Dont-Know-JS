@@ -180,23 +180,43 @@ Some other differences to note with **OLOO style code**:
 
    In other words, the general utility methods that exist on `Task` are available to us while interacting with `XYZ`, because `XYZ` can delegate to `Task`.
 
+Суть **делегирования поведения**: пускай объект (`XYZ`) запросит методы или свойства - т.е. делегирует часть работы - другому объекту (`Task`) в том случае, если этот метод/свойство не найдены в первом объекте (`XYZ`).
+
 **Behavior Delegation** means: let some object (`XYZ`) provide a delegation (to `Task`) for property or method references if not found on the object (`XYZ`).
+
+Делегирование - *очень мощный* шаблон проектирования, при этом он кардинально отличается от идеи родительского и дочернего классов, наследования, полиморфизма и т. Д. Вместо того, чтобы организовывать объекты в своем сознании по вертикали, с родителями, которые перетекают в детей, при делегировании думают об объектах как о расположенных бок-о-бок, с любым направлением делегирования связей между объектами по мере необходимости.
 
 This is an *extremely powerful* design pattern, very distinct from the idea of parent and child classes, inheritance, polymorphism, etc. Rather than organizing the objects in your mind vertically, with Parents flowing down to Children, think of objects side-by-side, as peers, with any direction of delegation links between the objects as necessary.
 
+**Примечание:** Делегирование будет правильнее использовать для внутренней реализации деталей нашей логики, а не непосредственно в интерфейсе API. В приведенном выше примере мы не обязаны *намеренно* дать возможность через API вызывать `XYZ.setID ()` (хотя можем, конечно!). Мы как бы *скрываем* делегирование как внутреннюю деталь нашего API, где `XYZ.prepareTask (..)` делегирует `Task.setID (..)`. См. обсуждение «Ссылки как резервные копии?» в главе 5 для более подробной информации.
+
 **Note:** Delegation is more properly used as an internal implementation detail rather than exposed directly in the API interface design. In the above example, we don't necessarily *intend* with our API design for developers to call `XYZ.setID()` (though we can, of course!). We sorta *hide* the delegation as an internal detail of our API, where `XYZ.prepareTask(..)` delegates to `Task.setID(..)`. See the "Links As Fallbacks?" discussion in Chapter 5 for more detail.
+
+#### Взаимное делегирование (не разрешено)
 
 #### Mutual Delegation (Disallowed)
 
+Вы не можете создать *циклическую цепочку*, где два или более объектов взаимно делегированы (в двух направлениях) друг другу. Если вы свяжете `B` с` A`, а затем попытаетесь связать `A` с` B`, вы получите сообщение об ошибке.
+
 You cannot create a *cycle* where two or more objects are mutually delegated (bi-directionally) to each other. If you make `B` linked to `A`, and then try to link `A` to `B`, you will get an error.
+
+Это позор (не ужасно удивительно, но слегка раздражает), что это запрещено. Если вы сделали ссылку на свойство / метод, которого не было в каком-то месте, у вас была бы бесконечная рекурсия в цикле `[[Prototype]]`. Но если все ссылки были строго представлены, то `B` мог делегировать` A`, и наоборот, и он *мог бы* работать. Это означает, что вы можете использовать любой объект для делегирования другому, для различных задач. Есть несколько случаев использования ниши, когда это может быть полезно.
 
 It's a shame (not terribly surprising, but mildly annoying) that this is disallowed. If you made a reference to a property/method which didn't exist in either place, you'd have an infinite recursion on the `[[Prototype]]` loop. But if all references were strictly present, then `B` could delegate to `A`, and vice versa, and it *could* work. This would mean you could use either object to delegate to the other, for various tasks. There are a few niche use-cases where this might be helpful.
 
+Но это запрещено, потому что разработчики JS-движков заметили, что более эффективно проверять (и отклонять!) бесконечную циклическую ссылку один раз в установленное время, а не каждый раз, когда вы просматриваете свойство, нужно получить хитрость выполнения этой проверки защиты объект.
+
 But it's disallowed because engine implementors have observed that it's more performant to check for (and reject!) the infinite circular reference once at set-time rather than needing to have the performance hit of that guard check every time you look-up a property on an object.
+
+#### Отладка
 
 #### Debugged
 
+Мы кратко рассмотрим тонкие детали, которые могут быть непонятны разработчикам. В общем случае спецификация JS не определяет, каким образом средства разработки браузеров должны представлять конкретные значения / структуры разработчику, поэтому каждый браузер / механизм может интерпретировать такие вещи, которые они считают нужным. Таким образом, браузеры / инструменты *не всегда соглашаются*. В частности, поведение, которое мы сейчас рассмотрим, в настоящее время наблюдается только в инструментах разработчика Chrome.
+
 We'll briefly cover a subtle detail that can be confusing to developers. In general, the JS specification does not control how browser developer tools should represent specific values/structures to a developer, so each browser/engine is free to interpret such things as they see fit. As such, browsers/tools *don't always agree*. Specifically, the behavior we will now examine is currently observed only in Chrome's Developer Tools.
+
+Рассмотрим традиционный JS-код стиля «конструктор класса», как он будет отображаться в консоли консоли Chrome Developer Tools:
 
 Consider this traditional "class constructor" style JS code, as it would appear in the *console* of Chrome Developer Tools:
 
@@ -208,9 +228,15 @@ var a1 = new Foo();
 a1; // Foo {}
 ```
 
+Давайте посмотрим на последнюю строку этого фрагмента: результат вычисления выражения `a1`, которое печатает` Foo {} `. Если вы попробуете этот же код в Firefox, вы, скорее всего, увидите `Object {}`. Откуда разница? Что означают эти выходные данные?
+
 Let's look at the last line of that snippet: the output of evaluating the `a1` expression, which prints `Foo {}`. If you try this same code in Firefox, you will likely see `Object {}`. Why the difference? What do these outputs mean?
 
+По сути Chrome говорит, что «{} - пустой объект, который был создан функцией с именем« Foo». Firefox говорит, что «{} - пустой объект общей конструкции из Object». Тонким отличием является то, что Chrome активно отслеживает в качестве *внутреннего свойства* имя фактической функции, которая выполняла построение, в то время как другие браузеры не отслеживают эту дополнительную информацию.
+
 Chrome is essentially saying "{} is an empty object that was constructed by a function with name 'Foo'". Firefox is saying "{} is an empty object of general construction from Object". The subtle difference is that Chrome is actively tracking, as an *internal property*, the name of the actual function that did the construction, whereas other browsers don't track that additional information.
+
+Было бы заманчиво попытаться объяснить это с помощью механизмов JavaScript:
 
 It would be tempting to attempt to explain this with JavaScript mechanisms:
 
@@ -222,8 +248,11 @@ var a1 = new Foo();
 a1.constructor; // Foo(){}
 a1.constructor.name; // "Foo"
 ```
+Итак, это то, как Chrome выводит «Foo», просто изучая объект `.constructor.name`? Немного странно, но ответ - и «да», и «нет».
 
 So, is that how Chrome is outputting "Foo", by simply examining the object's `.constructor.name`? Confusingly, the answer is both "yes" and "no".
+
+Рассмотрим следующий код:
 
 Consider this code:
 
