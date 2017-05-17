@@ -9,7 +9,7 @@ In Chapter 5, we addressed the `[[Prototype]]` mechanism  in detail, and *why* i
 
 It's a common reaction at this point to wonder why it has to be so complex to do something seemingly so simple. Now that we've pulled back the curtain and seen just how dirty it all gets, it's not a surprise that most JS developers never dive this deep, and instead relegate such mess to a "class" library to handle it for them.
 
-Я надеюсь, что к текущему моменту вам уже недостаточно беглого рассмотрения этих нюансов, чтобы затем оставить их на откуп какой-то библиотеки, с которой ви будете работать по принципу "черного ящика". Давайте копнем глубже, и посмотрим, как мы *можем и должны* думать о механизме `[[Prototype]]` у обектов JavaScript — причем делать это **намного более простим и прямолинейним способом**, чем при попытках имитации классов.
+Я надеюсь, что к текущему моменту вам уже недостаточно лишь беглого рассмотрения этих нюансов, чтобы затем оставить их на откуп какой-то библиотеки, с которой ви будете работать по принципу "черного ящика". Давайте копнем глубже, и посмотрим, как мы *можем и должны* думать о механизме `[[Prototype]]` у обектов JavaScript — причем делать это **намного более простим и прямолинейним способом**, чем при попытках имитации классов.
 
 I hope by now you're not content to just gloss over and leave such details to a "black box" library. Let's now dig into how we *could and should be* thinking about the object `[[Prototype]]` mechanism in JS, in a **much simpler and more straightforward way** than the confusion of classes.
 
