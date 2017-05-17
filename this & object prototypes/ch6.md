@@ -23,7 +23,7 @@ As a brief review of our conclusions from Chapter 5, the `[[Prototype]]` mechani
 
 This linkage is exercised when a property/method reference is made against the first object, and no such property/method exists. In that case, the `[[Prototype]]` linkage tells the engine to look for the property/method on the linked-to object. In turn, if that object cannot fulfill the look-up, its `[[Prototype]]` is followed, and so on. This series of links between objects forms what is called the "prototype chain".
 
-Другими словами, реальный механизм, суть того, что важно для функциональности, которую мы можем использовать в JavaScript, - это ** все об объектах, связанных с другими объектами. **
+Другими словами, реальный механизм, суть того, что важно для функциональности, которую мы можем использовать в JavaScript, - это **все об объектах, связанных с другими объектами**.
 
 In other words, the actual mechanism, the essence of what's important to the functionality we can leverage in JavaScript, is **all about objects being linked to other objects.**
 
@@ -51,13 +51,27 @@ We need to try to change our thinking from the class/inheritance design pattern 
 
 I'm going to walk you through some theoretical exercises first, then we'll look side-by-side at a more concrete example to give you practical context for your own code.
 
+### Теория классов
+
 ### Class Theory
+
+Скажем, у нас есть несколько похожих задач («XYZ», «ABC» и т. Д.), которые нам нужно смоделировать в нашем программном обеспечении.
 
 Let's say we have several similar tasks ("XYZ", "ABC", etc) that we need to model in our software.
 
+С классами способ проектирования имеет такой сценарий: определить общий родительский (базовый) класс, такой как `Task`, определяющий совместное поведение для всех« похожих »задач. Затем вы определяете дочерние классы `XYZ` и` ABC`, обе из которых наследуют `Task`, и каждый из них добавляет специализированное поведение для обработки своих соответствующих задач.
+
 With classes, the way you design the scenario is: define a general parent (base) class like `Task`, defining shared behavior for all the "alike" tasks. Then, you define child classes `XYZ` and `ABC`, both of which inherit from `Task`, and each of which adds specialized behavior to handle their respective tasks.
 
-**Importantly,** the class design pattern will encourage you that to get the most out of inheritance, you will want to employ method overriding (and polymorphism), where you override the definition of some general `Task` method in your `XYZ` task, perhaps even making use of `super` to call to the base version of that method while adding more behavior to it. **You'll likely find quite a few places** where you can "abstract" out general behavior to the parent class and specialize (override) it in your child classes.
+**Важно отметить**, что шаблон класса будет стимулировать вас к тому, чтобы извлечь максимальную выгоду из наследования, вы захотите использовать переопределение метода (и полиморфизм), в котором вы переопределите определение какого-то общего метода `Task` в вашем` XYZ `Task, возможно даже используя` super`, чтобы вызвать базовую версию этого метода, добавив при этом большее поведение.
+
+**Importantly,** the class design pattern will encourage you that to get the most out of inheritance, you will want to employ method overriding (and polymorphism), where you override the definition of some general `Task` method in your `XYZ` task, perhaps even making use of `super` to call to the base version of that method while adding more behavior to it. 
+
+**Вы наверняка найдете немало мест**, где вы можете «абстрагироваться» от общего поведения родительского класса и специализировать (переопределять) его в ваших дочерних классах.
+
+**You'll likely find quite a few places** where you can "abstract" out general behavior to the parent class and specialize (override) it in your child classes.
+
+Вот небольшой псевдокод для этого сценария:
 
 Here's some loose pseudo-code for that scenario:
 
@@ -82,6 +96,8 @@ class ABC inherits Task {
 	// ...
 }
 ```
+
+Теперь вы можете создать одну или несколько **копий** дочернего класса `XYZ` и использовать эти экземпляры для выполнения задачи« XYZ ». Эти экземпляры имеют **копируют поведение сразу из двух классов** - как общее поведение, определенное в `Task`, так и специфичное поведение, определенное в `XYZ`. Аналогично, экземпляры класса `ABC` будут иметь копии поведения `Task` и конкретного поведения `ABC`. После конструирования вы, как правило, будете взаимодействовать только с этими экземплярами (а не с классами), так как каждый экземпляр имеет копии всего поведения, необходимого для выполнения намеченной задачи.
 
 Now, you can instantiate one or more **copies** of the `XYZ` child class, and use those instance(s) to perform task "XYZ". These instances have **copies both** of the general `Task` defined behavior as well as the specific `XYZ` defined behavior. Likewise, instances of the `ABC` class would have copies of the `Task` behavior and the specific `ABC` behavior. After construction, you will generally only interact with these instances (and not the classes), as the instances each have copies of all the behavior you need to do the intended task.
 
