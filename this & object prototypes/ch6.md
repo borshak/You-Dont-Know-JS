@@ -160,11 +160,23 @@ In JavaScript, the `[[Prototype]]` mechanism links **objects** to other **object
 
 Some other differences to note with **OLOO style code**:
 
+1. Элементы данных `id` и` label` из предыдущего примера класса являются свойствами данных непосредственно в `XYZ` (ни одна из них не относится к `Task`). В общем, когда используется делегирование через `[[[Prototype]]`, вы хотите, чтобы **состояние хранилось в объектах, которые делегируют** (`XYZ`, `ABC`), а не в объекте, которому делегируют (`Task`).
+
 1. Both `id` and `label` data members from the previous class example are data properties directly on `XYZ` (neither is on `Task`). In general, with `[[Prototype]]` delegation involved, **you want state to be on the delegators** (`XYZ`, `ABC`), not on the delegate (`Task`).
+
+2. С шаблоном проектирования класса мы намеренно назвали `outputTask` то же самое для обоих родительских (`Task`) и дочерних (`XYZ`), чтобы мы могли использовать переопределение (полиморфизм). В делегировании поведения мы делаем обратное: **мы избегаем, если вообще возможно, называть вещи одинаковыми именами** на разных уровнях цепочки `[[Prototype]]` (полиморфизм тут называется "затенением" - см. Главу 5), потому что такие коллизии имен выливаются в неудобный / хрупкий синтаксис для устранения неоднозначности ссылок (см. Главу 4), а мы, по возможности, хотим его избежать.
+
 2. With the class design pattern, we intentionally named `outputTask` the same on both parent (`Task`) and child (`XYZ`), so that we could take advantage of overriding (polymorphism). In behavior delegation, we do the opposite: **we avoid if at all possible naming things the same** at different levels of the `[[Prototype]]` chain (called shadowing -- see Chapter 5), because having those name collisions creates awkward/brittle syntax to disambiguate references (see Chapter 4), and we want to avoid that if we can.
 
+   Этот шаблон проектирования требует меньше общих имен методов, склонных к переопределению, и вместо этого более описательных имен методов, *специфических* тому типу поведения, который каждый объект выполняет. **Это может фактически облегчить понимание / поддержку кода**, потому что имена методов (не только в определении определения, но и в другом фрагменте кода) более очевидны (самодокументирование).
+
    This design pattern calls for less of general method names which are prone to overriding and instead more of descriptive method names, *specific* to the type of behavior each object is doing. **This can actually create easier to understand/maintain code**, because the names of methods (not only at definition location but strewn throughout other code) are more obvious (self documenting).
+   
+ 3. `this.setID (ID);` внутри метода объекта `XYZ` сначала ищет `setID (..)` в объекте `XYZ`, но так как он не находит метод с таким именем в `XYZ`, *делегирование* через `[[Prototype]]` дает возможность перейти по ссылке к объекту `Task` для поиска `setID (..)`, и там этот метод, конечно, находится. Более того, из-за неявных правил привязки этого правила `this` (см. Главу 2), когда выполняется `setID (..)`, хотя метод был найден в `Task`,` this`-привязкой для этого вызова функции является `XYZ`, как мы и ожидали. Мы видим то же самое с `this.outputID ()` позже в листинге кода.
+   
 3. `this.setID(ID);` inside of a method on the `XYZ` object first looks on `XYZ` for `setID(..)`, but since it doesn't find a method of that name on `XYZ`, `[[Prototype]]` *delegation* means it can follow the link to `Task` to look for `setID(..)`, which it of course finds. Moreover, because of implicit call-site `this` binding rules (see Chapter 2), when `setID(..)` runs, even though the method was found on `Task`, the `this` binding for that function call is `XYZ` exactly as we'd expect and want. We see the same thing with `this.outputID()` later in the code listing.
+
+   Иными словами, общие методы, которые существуют в `Task`, доступны нам во время взаимодействия с `XYZ`, потому что `XYZ` может делегировать [часть работы] `Task`.
 
    In other words, the general utility methods that exist on `Task` are available to us while interacting with `XYZ`, because `XYZ` can delegate to `Task`.
 
