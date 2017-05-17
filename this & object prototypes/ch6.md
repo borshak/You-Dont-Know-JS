@@ -101,13 +101,23 @@ class ABC inherits Task {
 
 Now, you can instantiate one or more **copies** of the `XYZ` child class, and use those instance(s) to perform task "XYZ". These instances have **copies both** of the general `Task` defined behavior as well as the specific `XYZ` defined behavior. Likewise, instances of the `ABC` class would have copies of the `Task` behavior and the specific `ABC` behavior. After construction, you will generally only interact with these instances (and not the classes), as the instances each have copies of all the behavior you need to do the intended task.
 
+### Теория делегирования
+
 ### Delegation Theory
+
+Но теперь давайте попробуем думать о тех же задачах, но используя *делегацию поведения* вместо *классов*.
 
 But now let's try to think about the same problem domain, but using *behavior delegation* instead of *classes*.
 
+Сначала вы определите **объект** (не класс и не `функцию`, как большинство JS-разработчиков заставили бы вас поверить) под названием `Task`, и он будет иметь конкретное поведение, которое включает в себя вспомогательные методы, которые различные Задачи могут использоваться (читайте: **делегировать ему**!). Затем для каждой задачи ("XYZ", "ABC") вы определяете **объект**, чтобы хранить данные / поведение конкретной задачи. Вы **связываете** объект(ы) конкретной задачи с базовым объектом `Task`, позволяя объектам задач делегировать работу базовому объекту, когда это необходимо.
+
 You will first define an **object** (not a class, nor a `function` as most JS'rs would lead you to believe) called `Task`, and it will have concrete behavior on it that includes utility methods that various tasks can use (read: *delegate to*!). Then, for each task ("XYZ", "ABC"), you define an **object** to hold that task-specific data/behavior. You **link** your task-specific object(s) to the `Task` utility object, allowing them to delegate to it when they need to.
 
+В целом, вы думаете о выполнении задачи "XYZ" как о необходимом поведении из двух родственных объектов (`XYZ` и `Task`), чтобы выполнить все, что нам надо. Вместо того, чтобы компоновать их вместе с помощью классов, мы можем хранить их в своих отдельных объектах, и позволить объекту `XYZ` **делегировать** часть работы объекту  `Task` при необходимости.
+
 Basically, you think about performing task "XYZ" as needing behaviors from two sibling/peer objects (`XYZ` and `Task`) to accomplish it. But rather than needing to compose them together, via class copies, we can keep them in their separate objects, and we can allow `XYZ` object to **delegate to** `Task` when needed.
+
+Вот простой код, который демонстрирует, как это сделать:
 
 Here's some simple code to suggest how you accomplish that:
 
@@ -134,11 +144,19 @@ XYZ.outputTaskDetails = function() {
 // ABC ... = ...
 ```
 
+В этом коде `Task` и `XYZ` не являются классами (или функциями), это **просто объекты**. `XYZ` создается с помощью` Object.create (..)`, и его `[[Prototype]]` указывает (т.е. делегирует полномочия) на объект `Task` (см. Главу 5).
+
 In this code, `Task` and `XYZ` are not classes (or functions), they're **just objects**. `XYZ` is set up via `Object.create(..)` to `[[Prototype]]` delegate to the `Task` object (see Chapter 5).
+
+По сравнению с дизайном, ориентированным на классы (т.е., ОО - объектно-ориентированным), я называю подобный стиль кода **OLOO** (объекты, связанные с другими объектами). Все, что нас *действительно* волнует, это то, что объект `XYZ` делегирует [часть работы] объекту `Task` (как и объект `ABC`).
 
 As compared to class-orientation (aka, OO -- object-oriented), I call this style of code **"OLOO"** (objects-linked-to-other-objects). All we *really* care about is that the `XYZ` object delegates to the `Task` object (as does the `ABC` object).
 
+В JavaScript механизм [[Prototype]] связывает **объекты** с другими **объектами**. Нет абстрактных механизмов, таких как "классы", независимо от того, как сильно вы пытаетесь убедить себя в обратном. Это похоже на греблю каноэ вверх по течению: вы *можете* это сделать, но при этом вам приходится *плыть против естественного течения*, так что, очевидно, вам будет **сложнее** добраться к месту назначения.
+
 In JavaScript, the `[[Prototype]]` mechanism links **objects** to other **objects**. There are no abstract mechanisms like "classes", no matter how much you try to convince yourself otherwise. It's like paddling a canoe upstream: you *can* do it, but you're *choosing* to go against the natural current, so it's obviously **going to be harder to get where you're going.**
+
+Некоторые другие особенности **кода в стиле OLOO**:
 
 Some other differences to note with **OLOO style code**:
 
