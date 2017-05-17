@@ -13,6 +13,8 @@ It's a common reaction at this point to wonder why it has to be so complex to do
 
 I hope by now you're not content to just gloss over and leave such details to a "black box" library. Let's now dig into how we *could and should be* thinking about the object `[[Prototype]]` mechanism in JS, in a **much simpler and more straightforward way** than the confusion of classes.
 
+В качестве краткого обзора наших выводов из Главы 5: механизм `[[Prototype]]` есть не что иное, как внутренняя ссылка, существующая в одном объекте, и ведущая (т.е. указывающая) на другой объект.
+
 As a brief review of our conclusions from Chapter 5, the `[[Prototype]]` mechanism is an internal link that exists on one object which references another object.
 
 This linkage is exercised when a property/method reference is made against the first object, and no such property/method exists. In that case, the `[[Prototype]]` linkage tells the engine to look for the property/method on the linked-to object. In turn, if that object cannot fulfill the look-up, its `[[Prototype]]` is followed, and so on. This series of links between objects forms what is called the "prototype chain".
