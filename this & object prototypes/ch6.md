@@ -1,5 +1,7 @@
-# You Don't Know JS: *this* & Object Prototypes
-# Chapter 6: Behavior Delegation
+# Вы не знаете JavaScript: *this* и прототипы объектов
+# Глава 6: Делегирование поведения
+
+В главе 5 мы подробно рассмотрели механизм `[[Prototype]]`, — и то, *почему* он сбивает с толку, и почему зачастую неуместно описывать его в терминах *классов* и *наследования* (несмотря на бесчисленные попытки рассматривать его в данном ключе на протяжении более 20 лет). Мы увидели не только довольно многословный синтакс (использование `.prototype` засоряет код), но и познакомились со множеством подводных камней (наподобие неожиданного поведения свойства `.constructor` или уродливого синтаксиса, реализующего псевдо-полиморфизм). Мы также изучили разные варианты приема "mixin" ("подмешивание"), который многие используют в попытках сгладить неровности и недостатки, перечисленные выше.
 
 In Chapter 5, we addressed the `[[Prototype]]` mechanism  in detail, and *why* it's confusing and inappropriate (despite countless attempts for nearly two decades) to describe it as "class" or "inheritance". We trudged through not only the fairly verbose syntax (`.prototype` littering the code), but the various gotchas (like surprising `.constructor` resolution or ugly pseudo-polymorphic syntax). We explored variations of the "mixin" approach, which many people use to attempt to smooth over such rough areas.
 
