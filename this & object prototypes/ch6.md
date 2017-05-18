@@ -23,11 +23,11 @@ As a brief review of our conclusions from Chapter 5, the `[[Prototype]]` mechani
 
 This linkage is exercised when a property/method reference is made against the first object, and no such property/method exists. In that case, the `[[Prototype]]` linkage tells the engine to look for the property/method on the linked-to object. In turn, if that object cannot fulfill the look-up, its `[[Prototype]]` is followed, and so on. This series of links between objects forms what is called the "prototype chain".
 
-Другими словами, реальный механизм, суть того, что важно для функциональности, которую мы можем использовать в JavaScript, - это **все об объектах, связанных с другими объектами**.
+Другими словами, реальный механизм, суть того, что важно для функциональности, которую мы можем использовать в JavaScript - это то, что **одни объекты имеют связь с другими объектами**.
 
 In other words, the actual mechanism, the essence of what's important to the functionality we can leverage in JavaScript, is **all about objects being linked to other objects.**
 
-Это единственное наблюдение является фундаментальным и критически важным для понимания мотивов и подходов к остальной части этой главы!
+Этот единственный факт является фундаментальным и критически важным для понимания мотивов и подходов к остальной части этой главы!
 
 That single observation is fundamental and critical to understanding the motivations and approaches for the rest of this chapter!
 
